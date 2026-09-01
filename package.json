@@ -1,0 +1,15 @@
+{
+  "name": "rumahgis-threads-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node scripts/validate-thread.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "publish:dry": "node scripts/threads-publisher.mjs",
+    "publish": "node scripts/threads-publisher.mjs"
+  }
+}
