@@ -41,6 +41,8 @@ Untuk pipeline RumahGIS, token minimal perlu izin `threads_basic` dan `threads_c
 
 Open API Shopee tidak digunakan. Owner membuat Custom Link secara manual, lalu memasukkan produk yang sudah diperiksa ke `config/affiliate-products.json`. Sebuah produk hanya dapat dipilih ketika `status` bernilai `active`, `approved_for_auto_publish` bernilai `true`, short-link memakai host resmi `s.shopee.co.id`, dan isi utas cocok dengan minimal satu `relevance_keywords`.
 
+Bank awal berisi 20 produk aktif yang dibuat melalui dashboard Shopee Affiliate: jas hujan, kompas/navigasi, power bank untuk kerja lapangan, dan dry bag pelindung peralatan. Kelompok produk dapat dijeda sewaktu-waktu dengan mengubah `status` menjadi `paused` atau `approved_for_auto_publish` menjadi `false`.
+
 Pada payload, gunakan `affiliate.mode`:
 
 - `no`: tidak memakai affiliate.

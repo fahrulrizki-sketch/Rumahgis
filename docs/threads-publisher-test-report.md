@@ -21,6 +21,7 @@ Status: PRE-PRODUCTION PASS / LIVE AUTH PENDING
 - Relevansi produk wajib cocok secara eksplisit; produk yang dipaksakan ditolak.
 - Link percobaan `904rirq1Xk` tidak dapat diaktifkan untuk auto-publish.
 - Link affiliate yang lolos ditempatkan pada reply terakhir; reply baru dibuat bila batas 500 karakter terlampaui.
+- Dua puluh Custom Link produksi telah dibuat manual melalui dashboard Shopee Affiliate dan lolos validasi bank lokal; link percobaan tetap terpisah dan nonaktif.
 
 ## Pengujian live yang belum boleh dilakukan
 
