@@ -1,22 +1,40 @@
 # RumahGIS Threads Automation
 
-Fondasi automation konten untuk akun Threads **@rumahgis**.
+Automation konten untuk akun Threads **@rumahgis**.
 
 ## Tujuan
 - Menyiapkan draft konten secara terstruktur.
-- Memvalidasi konten sebelum publikasi.
-- Menyiapkan integrasi resmi Threads API.
+- Memvalidasi isi sebelum publikasi.
+- Mempublikasikan post utama dan reply berantai melalui Threads API resmi.
 - Memisahkan credential/secret dari source code.
-- Mendukung alur draft → review → publish → log.
+- Menyediakan dry-run, healthcheck, test, dan utilitas pemeliharaan token.
 
-## Struktur awal
+## Struktur
 - `content/drafts/` — draft yang belum dipublikasikan.
 - `content/published/` — arsip metadata konten yang sudah dipublikasikan.
-- `scripts/` — script validasi dan, nantinya, publisher Threads API.
-- `config/` — konfigurasi non-rahasia.
+- `scripts/thread-schema.mjs` — validasi payload dan batas teks.
+- `scripts/validate-thread.mjs` — validasi file draft.
+- `scripts/threads-healthcheck.mjs` — cek token/account tanpa melakukan write.
+- `scripts/threads-publisher.mjs` — publisher post utama + reply berantai.
+- `scripts/threads-exchange-token.mjs` — tukar short-lived token menjadi long-lived token.
+- `scripts/threads-refresh-token.mjs` — refresh long-lived token yang masih valid.
+- `tests/` — unit test dan integration test dengan mock Threads API.
+- `.github/workflows/threads-publisher-ci.yml` — CI untuk test, validasi, dan dry-run.
 
 ## Keamanan
-Jangan pernah commit access token, app secret, password, atau credential Meta/Threads ke repository. Gunakan environment variables atau secret manager.
+Jangan pernah commit access token, app secret, password, atau credential Meta/Threads ke repository. Credential dibaca melalui environment variable. Live publish juga diblokir secara default dan hanya berjalan ketika `--publish` diberikan.
+
+## Permission Threads yang diperlukan
+Untuk pipeline RumahGIS, token minimal perlu izin `threads_basic` dan `threads_content_publish`. Karena publisher membuat reply berantai, aplikasi juga harus memiliki izin reply yang dibutuhkan oleh Threads API untuk membuat reply, saat ini `threads_manage_replies`.
+
+## Alur aman
+1. `npm test`
+2. `node scripts/validate-thread.mjs <payload.json>`
+3. `node scripts/threads-publisher.mjs <payload.json>` untuk dry-run.
+4. `node scripts/threads-healthcheck.mjs` setelah token tersedia.
+5. Baru jalankan `node scripts/threads-publisher.mjs <payload.json> --publish` untuk publikasi nyata.
 
 ## Status
-Tahap 1: fondasi repository. Publisher Threads API belum diaktifkan sampai credential dan endpoint diverifikasi.
+Implementasi publisher, validation, dry-run, healthcheck, token maintenance, reply chaining, retry, timeout, unit test, integration test, dan CI sudah tersedia.
+
+Tahap live masih membutuhkan satu dependency eksternal yang tidak boleh diotomatisasi tanpa otorisasi pemilik akun: **Threads User Access Token untuk @rumahgis** dengan permission yang benar. Setelah token tersedia, `THREADS_USER_ID` dapat diambil otomatis dari endpoint `/me` sehingga tidak wajib diisi manual.
