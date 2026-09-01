@@ -1,0 +1,49 @@
+name: Threads First Regular Content Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Ketik PUBLISH_RUMAHGIS_FIRST_CONTENT untuk menyetujui utas reguler pertama'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: threads-first-regular-content-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      THREADS_ACCESS_TOKEN: ${{ secrets.TOKEN_THREADS_RUMAHGIS }}
+      THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+      PAYLOAD: content/drafts/2026-09-01-zona-musim-kemarau-indonesia.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify explicit publication confirmation
+        shell: bash
+        run: |
+          if [ "${{ inputs.confirmation }}" != "PUBLISH_RUMAHGIS_FIRST_CONTENT" ]; then
+            echo "Confirmation text did not match; no content was published."
+            exit 2
+          fi
+      - name: Run automated tests
+        run: npm test
+      - name: Validate affiliate product bank
+        run: npm run validate:affiliate
+      - name: Validate reviewed content
+        run: node scripts/validate-thread.mjs "$PAYLOAD"
+      - name: Dry-run reviewed content
+        run: node scripts/threads-publisher.mjs "$PAYLOAD"
+      - name: Run read-only Threads account healthcheck
+        run: node scripts/threads-healthcheck.mjs
+      - name: Publish reviewed thread
+        run: node scripts/threads-publisher.mjs "$PAYLOAD" --publish

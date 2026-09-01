@@ -1,0 +1,28 @@
+{
+  "account": "@rumahgis",
+  "mode": "draft",
+  "requireReview": true,
+  "affiliate": {
+    "mode": "no"
+  },
+  "main": {
+    "text": "September 2026, sebagian wilayah Indonesia masih berada di puncak kemarau. Tapi kenapa di kota lain hujan tetap turun?\n\nKarena musim di Indonesia tidak bergerak serentak. BMKG membaginya ke dalam Zona Musim atau ZOM: wilayah yang memiliki pola hujan mirip. Yuk belajar membaca peta musim tanpa salah paham. 🧵"
+  },
+  "replies": [
+    {
+      "text": "Menurut BMKG, 169 ZOM diprediksi mencapai puncak kemarau pada September 2026. Wilayahnya mencakup sebagian Bangka Belitung, Sumatra Selatan, Lampung, NTT, Kalimantan bagian selatan, Sulawesi, Maluku, Maluku Utara, dan Papua Pegunungan.\n\nArtinya, bukan seluruh provinsi otomatis kering pada waktu yang sama."
+    },
+    {
+      "text": "Cuaca dan musim juga berbeda.\n\nCuaca adalah kondisi dalam waktu pendek: misalnya hujan sore ini. Musim menggambarkan pola yang berlangsung lebih lama. Jadi, hujan satu atau dua hari tidak otomatis berarti musim kemarau sudah berakhir."
+    },
+    {
+      "text": "Kenapa peta memakai Zona Musim, bukan hanya batas provinsi?\n\nKarena satu provinsi bisa memiliki pegunungan, pesisir, dan dataran rendah dengan pola hujan berbeda. Batas administrasi dibuat untuk pemerintahan, sedangkan ZOM dibuat dari kemiripan pola iklim."
+    },
+    {
+      "text": "Cara membacanya untuk orang awam:\n\n1. Cari lokasi kabupaten atau kota, bukan hanya nama provinsi.\n2. Lihat apakah lokasi itu termasuk wilayah ZOM atau wilayah satu musim.\n3. Periksa periode prediksi dan tanggal pembaruannya.\n4. Tetap cek prakiraan cuaca harian BMKG untuk kegiatan sehari-hari."
+    },
+    {
+      "text": "Sumber resmi:\n• Prediksi Musim Kemarau 2026 — BMKG\nhttps://www.bmkg.go.id/iklim/prediksi-musim/prediksi-musim-kemarau-tahun-2026-di-indonesia\n\n• Penjelasan puncak kemarau Juli–September 2026 — BMKG\nhttps://www.bmkg.go.id/berita/utama/bmkg-puncak-musim-kemarau-agustus-2026-perkuat-kesiapan-hadapi-dampak-el-nino"
+    }
+  ]
+}
