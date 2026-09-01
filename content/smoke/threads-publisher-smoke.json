@@ -1,0 +1,12 @@
+{
+  "account": "@rumahgis",
+  "mode": "smoke-test",
+  "requireReview": true,
+  "affiliate": {
+    "mode": "no"
+  },
+  "main": {
+    "text": "Uji sistem RumahGIS ✅\n\nPublisher Threads otomatis sedang diverifikasi. Ini adalah satu post uji teknis tanpa tautan affiliate."
+  },
+  "replies": []
+}

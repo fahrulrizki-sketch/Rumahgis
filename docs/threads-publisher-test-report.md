@@ -23,9 +23,9 @@ Status: PRE-PRODUCTION PASS / LIVE AUTH PENDING
 - Link affiliate yang lolos ditempatkan pada reply terakhir; reply baru dibuat bila batas 500 karakter terlampaui.
 - Dua puluh Custom Link produksi telah dibuat manual melalui dashboard Shopee Affiliate dan lolos validasi bank lokal; link percobaan tetap terpisah dan nonaktif.
 
-## Pengujian live yang belum boleh dilakukan
+## Status live
 
-Belum ada Threads User Access Token milik @rumahgis di environment pengujian. Karena itu tidak ada post nyata yang dibuat sebagai bagian dari test ini.
+GitHub Actions `Threads Live Healthcheck` telah berhasil menggunakan secret repository. Belum ada post nyata yang dibuat sebagai bagian dari test ini. Workflow smoke publish terkontrol dan payload tetap tanpa affiliate telah disiapkan; publikasi nyata tetap memerlukan pemicu manual serta konfirmasi eksplisit owner.
 
 Live verification baru boleh dilakukan setelah pemilik akun mengotorisasi Meta Threads App dan memberikan token melalui environment/secret store, bukan melalui commit GitHub.
 

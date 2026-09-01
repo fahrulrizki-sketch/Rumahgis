@@ -37,6 +37,8 @@ Untuk pipeline RumahGIS, token minimal perlu izin `threads_basic` dan `threads_c
 4. `node scripts/threads-healthcheck.mjs` setelah token tersedia.
 5. Baru jalankan `node scripts/threads-publisher.mjs <payload.json> --publish` untuk publikasi nyata.
 
+Smoke publish produksi menggunakan workflow manual `Threads Controlled Smoke Publish`. Workflow tersebut hanya menerima payload tetap `content/smoke/threads-publisher-smoke.json`, mewajibkan frasa konfirmasi `PUBLISH_RUMAHGIS_SMOKE`, dan menjalankan test, validasi bank, dry-run, serta healthcheck sebelum melakukan satu write ke Threads.
+
 ## Shopee Affiliate semi-otomatis
 
 Open API Shopee tidak digunakan. Owner membuat Custom Link secara manual, lalu memasukkan produk yang sudah diperiksa ke `config/affiliate-products.json`. Sebuah produk hanya dapat dipilih ketika `status` bernilai `active`, `approved_for_auto_publish` bernilai `true`, short-link memakai host resmi `s.shopee.co.id`, dan isi utas cocok dengan minimal satu `relevance_keywords`.

@@ -1,0 +1,49 @@
+name: Threads Controlled Smoke Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Ketik PUBLISH_RUMAHGIS_SMOKE untuk mengizinkan satu post uji nyata'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: threads-controlled-smoke-publish
+  cancel-in-progress: false
+
+jobs:
+  smoke-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      THREADS_ACCESS_TOKEN: ${{ secrets.TOKEN_THREADS_RUMAHGIS }}
+      THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+      PAYLOAD: content/smoke/threads-publisher-smoke.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify explicit smoke-publish confirmation
+        shell: bash
+        run: |
+          if [ "${{ inputs.confirmation }}" != "PUBLISH_RUMAHGIS_SMOKE" ]; then
+            echo "Confirmation text did not match; no post was published."
+            exit 2
+          fi
+      - name: Run automated tests
+        run: npm test
+      - name: Validate affiliate product bank
+        run: npm run validate:affiliate
+      - name: Validate fixed smoke payload
+        run: node scripts/validate-thread.mjs "$PAYLOAD"
+      - name: Dry-run fixed smoke payload
+        run: node scripts/threads-publisher.mjs "$PAYLOAD"
+      - name: Run read-only Threads account healthcheck
+        run: node scripts/threads-healthcheck.mjs
+      - name: Publish one fixed smoke post
+        run: node scripts/threads-publisher.mjs "$PAYLOAD" --publish
