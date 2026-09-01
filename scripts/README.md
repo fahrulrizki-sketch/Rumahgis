@@ -33,12 +33,18 @@ Credential jangan pernah dimasukkan ke source code atau commit GitHub.
     "text": "Teks post utama",
     "media": { "image_url": "https://..." }
   },
+  "affiliate": {
+    "mode": "auto",
+    "product_id": "jas-hujan-01"
+  },
   "replies": [
     { "text": "Komentar pertama" },
     { "text": "Komentar kedua", "media": { "image_url": "https://..." } }
   ]
 }
 ```
+
+`product_id` bersifat opsional. Publisher membaca bank dari `config/affiliate-products.json`, atau dari path `AFFILIATE_PRODUCT_BANK` untuk pengujian/operasional. Link affiliate hanya ditambahkan ke reply paling akhir setelah seluruh pengaman lolos. Jalankan `npm run validate:affiliate` setiap kali bank diubah.
 
 Media URL untuk live API harus dapat diakses oleh server Threads/Meta. File lokal tidak cukup.
 
@@ -47,6 +53,7 @@ Media URL untuk live API harus dapat diakses oleh server Threads/Meta. File loka
 - Default = dry-run.
 - `--publish` wajib untuk posting nyata.
 - Live publish gagal tertutup (fail closed) jika credential tidak tersedia.
+- Konten sensitif, link percobaan, produk nonaktif, short-link palsu, dan relevansi yang dipaksakan menghasilkan AFFILIATE NO.
 - Secret hanya dibaca dari environment variable.
 - Reply dibuat berurutan agar membentuk satu utas.
 

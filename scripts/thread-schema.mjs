@@ -51,5 +51,21 @@ export function validateThread(data) {
     });
   }
 
+  if (data.affiliate != null) {
+    if (typeof data.affiliate !== 'object' || Array.isArray(data.affiliate)) {
+      errors.push('affiliate wajib berupa object');
+    } else {
+      if (!['auto', 'yes', 'no'].includes(data.affiliate.mode)) {
+        errors.push('affiliate.mode harus auto, yes, atau no');
+      }
+      if (data.affiliate.product_id != null && (typeof data.affiliate.product_id !== 'string' || !data.affiliate.product_id.trim())) {
+        errors.push('affiliate.product_id harus berupa string yang tidak kosong');
+      }
+      if (data.affiliate.mode === 'no' && data.affiliate.product_id) {
+        errors.push('affiliate.product_id tidak boleh diisi ketika mode no');
+      }
+    }
+  }
+
   return errors;
 }

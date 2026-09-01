@@ -15,6 +15,7 @@
 
 import fs from 'node:fs/promises';
 import { validateThread } from './thread-schema.mjs';
+import { applyAffiliate, loadProductBank } from './affiliate.mjs';
 
 const args = process.argv.slice(2);
 const publish = args.includes('--publish');
@@ -38,11 +39,17 @@ async function loadPost(path) {
   const data = JSON.parse(raw);
   if (!Array.isArray(data.replies)) data.replies = [];
 
-  const errors = validateThread(data);
+  const initialErrors = validateThread(data);
+  if (initialErrors.length) {
+    throw new Error(`Payload tidak valid:\n- ${initialErrors.join('\n- ')}`);
+  }
+  const bank = await loadProductBank(process.env.AFFILIATE_PRODUCT_BANK);
+  const prepared = applyAffiliate(data, bank);
+  const errors = validateThread(prepared.post);
   if (errors.length) {
     throw new Error(`Payload tidak valid:\n- ${errors.join('\n- ')}`);
   }
-  return data;
+  return prepared;
 }
 
 function makeApiError(res, body) {
@@ -154,7 +161,8 @@ async function publishItem(item, replyToId = null) {
   return result.id;
 }
 
-const post = await loadPost(fileArg);
+const prepared = await loadPost(fileArg);
+const post = prepared.post;
 
 if (!publish) {
   console.log(JSON.stringify({
@@ -162,6 +170,12 @@ if (!publish) {
     valid: true,
     main: { text_chars: [...post.main.text].length, media: post.main.media || null },
     replies: post.replies.map((r, i) => ({ index: i + 1, text_chars: [...r.text].length, media: r.media || null })),
+    affiliate: {
+      decision: prepared.affiliate.decision,
+      reason: prepared.affiliate.reason,
+      product_id: prepared.affiliate.product?.id || null,
+      matched_keywords: prepared.affiliate.matched_keywords,
+    },
     note: 'Tidak ada posting yang dikirim. Gunakan --publish hanya setelah credential dan payload diverifikasi.'
   }, null, 2));
   process.exit(0);
@@ -183,4 +197,14 @@ for (let i = 0; i < post.replies.length; i++) {
   parentId = id;
 }
 
-console.log(JSON.stringify({ mode: 'published', user_id: USER_ID, root_id: rootId, published }, null, 2));
+console.log(JSON.stringify({
+  mode: 'published',
+  user_id: USER_ID,
+  root_id: rootId,
+  affiliate: {
+    decision: prepared.affiliate.decision,
+    reason: prepared.affiliate.reason,
+    product_id: prepared.affiliate.product?.id || null,
+  },
+  published,
+}, null, 2));

@@ -8,6 +8,7 @@ Automation konten untuk akun Threads **@rumahgis**.
 - Mempublikasikan post utama dan reply berantai melalui Threads API resmi.
 - Memisahkan credential/secret dari source code.
 - Menyediakan dry-run, healthcheck, test, dan utilitas pemeliharaan token.
+- Menilai kelayakan Shopee Affiliate dan menempatkan link relevan pada reply terakhir.
 
 ## Struktur
 - `content/drafts/` — draft yang belum dipublikasikan.
@@ -16,6 +17,8 @@ Automation konten untuk akun Threads **@rumahgis**.
 - `scripts/validate-thread.mjs` — validasi file draft.
 - `scripts/threads-healthcheck.mjs` — cek token/account tanpa melakukan write.
 - `scripts/threads-publisher.mjs` — publisher post utama + reply berantai.
+- `scripts/affiliate.mjs` — kebijakan AFFILIATE YES/NO, pemilihan produk, dan validasi short-link.
+- `config/affiliate-products.json` — bank produk/link/tag non-secret.
 - `scripts/threads-exchange-token.mjs` — tukar short-lived token menjadi long-lived token.
 - `scripts/threads-refresh-token.mjs` — refresh long-lived token yang masih valid.
 - `tests/` — unit test dan integration test dengan mock Threads API.
@@ -33,6 +36,18 @@ Untuk pipeline RumahGIS, token minimal perlu izin `threads_basic` dan `threads_c
 3. `node scripts/threads-publisher.mjs <payload.json>` untuk dry-run.
 4. `node scripts/threads-healthcheck.mjs` setelah token tersedia.
 5. Baru jalankan `node scripts/threads-publisher.mjs <payload.json> --publish` untuk publikasi nyata.
+
+## Shopee Affiliate semi-otomatis
+
+Open API Shopee tidak digunakan. Owner membuat Custom Link secara manual, lalu memasukkan produk yang sudah diperiksa ke `config/affiliate-products.json`. Sebuah produk hanya dapat dipilih ketika `status` bernilai `active`, `approved_for_auto_publish` bernilai `true`, short-link memakai host resmi `s.shopee.co.id`, dan isi utas cocok dengan minimal satu `relevance_keywords`.
+
+Pada payload, gunakan `affiliate.mode`:
+
+- `no`: tidak memakai affiliate.
+- `auto`: memilih produk relevan yang sudah disetujui dari bank.
+- `yes`: meminta affiliate; tetap gagal menjadi YES bila konten sensitif, produk tidak disetujui, atau relevansinya tidak alami. `product_id` dapat dipakai untuk menentukan produk.
+
+Konten tragedi, korban, bencana aktif, kematian, konflik, serta istilah darurat terkait selalu menghasilkan keputusan `NO`. Link percobaan `s.shopee.co.id/904rirq1Xk` tersimpan sebagai test fixture dan tidak dapat disetujui untuk publikasi otomatis. Dry-run menampilkan keputusan dan alasannya sebelum ada write ke Threads.
 
 ## Status
 Implementasi publisher, validation, dry-run, healthcheck, token maintenance, reply chaining, retry, timeout, unit test, integration test, dan CI sudah tersedia.

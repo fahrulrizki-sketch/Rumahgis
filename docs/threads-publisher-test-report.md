@@ -16,6 +16,11 @@ Status: PRE-PRODUCTION PASS / LIVE AUTH PENDING
 - Hasil mock menghasilkan urutan published ID: root → reply 1 → reply 2.
 - Payload validator membatasi teks 500 karakter dan menolak URL media non-HTTPS.
 - Live publish fail-closed jika `THREADS_ACCESS_TOKEN` tidak tersedia.
+- Bank produk affiliate divalidasi tanpa credential dan link harus memakai `https://s.shopee.co.id/...`.
+- Keputusan affiliate fail-closed untuk tragedi/korban/bencana aktif/kematian/konflik.
+- Relevansi produk wajib cocok secara eksplisit; produk yang dipaksakan ditolak.
+- Link percobaan `904rirq1Xk` tidak dapat diaktifkan untuk auto-publish.
+- Link affiliate yang lolos ditempatkan pada reply terakhir; reply baru dibuat bila batas 500 karakter terlampaui.
 
 ## Pengujian live yang belum boleh dilakukan
 

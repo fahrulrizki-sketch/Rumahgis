@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "updated_at": "2026-09-01",
+  "tag_format": ["RumahGIS", "Threads", "Topik", "YYYYMMDD", "Produk"],
+  "products": [
+    {
+      "id": "shopee-trial-do-not-publish",
+      "title": "Link percobaan — jangan dipublikasikan",
+      "category": "test",
+      "relevance_keywords": ["__affiliate_test_only__"],
+      "short_url": "https://s.shopee.co.id/904rirq1Xk",
+      "status": "test",
+      "approved_for_auto_publish": false,
+      "tags": ["RumahGIS", "Threads", "Test", "20260901", "Percobaan"],
+      "notes": "Placeholder untuk validasi. Ganti/tambah produk hasil Custom Link manual sebelum produksi."
+    }
+  ]
+}

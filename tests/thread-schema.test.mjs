@@ -29,3 +29,17 @@ test('rejects image and video at once', () => {
   });
   assert.ok(errors.some((e) => e.includes('bukan keduanya')));
 });
+
+test('validates affiliate control metadata', () => {
+  assert.deepEqual(validateThread({
+    main: { text: 'x' },
+    replies: [],
+    affiliate: { mode: 'auto', product_id: 'produk-1' },
+  }), []);
+  const errors = validateThread({
+    main: { text: 'x' },
+    replies: [],
+    affiliate: { mode: 'sometimes' },
+  });
+  assert.ok(errors.some((error) => error.includes('affiliate.mode')));
+});

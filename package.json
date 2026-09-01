@@ -8,6 +8,7 @@
   },
   "scripts": {
     "validate": "node scripts/validate-thread.mjs",
+    "validate:affiliate": "node scripts/validate-affiliate-bank.mjs",
     "test": "node --test tests/*.test.mjs",
     "healthcheck": "node scripts/threads-healthcheck.mjs",
     "token:exchange": "node scripts/threads-exchange-token.mjs",

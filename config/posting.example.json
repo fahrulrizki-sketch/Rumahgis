@@ -2,6 +2,9 @@
   "account": "@rumahgis",
   "mode": "draft",
   "requireReview": true,
+  "affiliate": {
+    "mode": "no"
+  },
   "main": {
     "text": "Contoh post utama RumahGIS."
   },

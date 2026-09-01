@@ -83,3 +83,62 @@ test('publisher resolves /me, creates root, and chains replies against mock Thre
   assert.equal(createCalls[1].params.reply_to_id, 'post-1');
   assert.equal(createCalls[2].params.reply_to_id, 'post-2');
 });
+
+test('publisher injects an approved relevant affiliate link only into the final reply', async (t) => {
+  const createCalls = [];
+  let counter = 0;
+  const server = http.createServer((req, res) => {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', () => {
+      const params = Object.fromEntries(new URLSearchParams(body).entries());
+      res.setHeader('content-type', 'application/json');
+      if (req.url === '/v1.0/123/threads') {
+        createCalls.push(params);
+        counter += 1;
+        res.end(JSON.stringify({ id: `container-${counter}` }));
+        return;
+      }
+      if (req.url === '/v1.0/123/threads_publish') {
+        res.end(JSON.stringify({ id: `post-${counter}` }));
+        return;
+      }
+      res.statusCode = 404;
+      res.end(JSON.stringify({ error: { message: 'not found' } }));
+    });
+  });
+
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const { port } = server.address();
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'rumahgis-affiliate-'));
+  const payloadPath = path.join(dir, 'thread.json');
+  const bankPath = path.join(dir, 'products.json');
+  await fs.writeFile(payloadPath, JSON.stringify({
+    main: { text: 'Panduan perjalanan saat musim hujan.' },
+    replies: [{ text: 'Cek prakiraan sebelum berangkat.' }],
+    affiliate: { mode: 'auto' },
+  }));
+  await fs.writeFile(bankPath, JSON.stringify({ products: [{
+    id: 'jas-hujan-01',
+    title: 'Jas hujan perjalanan',
+    relevance_keywords: ['musim hujan'],
+    short_url: 'https://s.shopee.co.id/abc123',
+    status: 'active',
+    approved_for_auto_publish: true,
+  }] }));
+
+  const result = await runNode(['scripts/threads-publisher.mjs', payloadPath, '--publish'], {
+    THREADS_API_BASE: `http://127.0.0.1:${port}/v1.0`,
+    THREADS_USER_ID: '123',
+    THREADS_ACCESS_TOKEN: 'test-token',
+    AFFILIATE_PRODUCT_BANK: bankPath,
+  });
+
+  assert.equal(result.code, 0, result.stderr);
+  assert.equal(createCalls.length, 2);
+  assert.doesNotMatch(createCalls[0].text, /shopee/i);
+  assert.match(createCalls[1].text, /Tautan affiliate/);
+  assert.match(createCalls[1].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
+  assert.equal(JSON.parse(result.stdout).affiliate.decision, 'YES');
+});
