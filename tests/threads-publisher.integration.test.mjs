@@ -17,17 +17,24 @@ function runNode(args, env) {
   });
 }
 
-test('publisher creates root and chained replies against mock Threads API', async (t) => {
+test('publisher resolves /me, creates root, and chains replies against mock Threads API', async (t) => {
   const calls = [];
   let createCounter = 0;
   let publishCounter = 0;
 
   const server = http.createServer((req, res) => {
+    if (req.method === 'GET' && req.url.startsWith('/v1.0/me?')) {
+      calls.push({ url: req.url, method: 'GET', params: {} });
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ id: '123', username: 'rumahgis' }));
+      return;
+    }
+
     let body = '';
     req.on('data', (d) => { body += d; });
     req.on('end', () => {
       const params = new URLSearchParams(body);
-      calls.push({ url: req.url, params: Object.fromEntries(params.entries()) });
+      calls.push({ url: req.url, method: req.method, params: Object.fromEntries(params.entries()) });
       res.setHeader('content-type', 'application/json');
 
       if (req.url === '/v1.0/123/threads') {
@@ -59,14 +66,16 @@ test('publisher creates root and chained replies against mock Threads API', asyn
 
   const result = await runNode(['scripts/threads-publisher.mjs', payloadPath, '--publish'], {
     THREADS_API_BASE: `http://127.0.0.1:${port}/v1.0`,
-    THREADS_USER_ID: '123',
+    THREADS_USER_ID: '',
     THREADS_ACCESS_TOKEN: 'test-token'
   });
 
   assert.equal(result.code, 0, result.stderr);
   const output = JSON.parse(result.stdout);
+  assert.equal(output.user_id, '123');
   assert.equal(output.root_id, 'post-1');
   assert.equal(output.published.length, 3);
+  assert.ok(calls.some((c) => c.method === 'GET' && c.url.startsWith('/v1.0/me?')));
 
   const createCalls = calls.filter((c) => c.url.endsWith('/threads'));
   assert.equal(createCalls.length, 3);
