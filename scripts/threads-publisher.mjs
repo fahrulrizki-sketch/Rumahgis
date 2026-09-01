@@ -7,9 +7,9 @@
  * Credential hanya dibaca dari environment variable.
  *
  * Required for live publishing:
- *   THREADS_USER_ID
  *   THREADS_ACCESS_TOKEN
  * Optional:
+ *   THREADS_USER_ID (jika kosong, diambil dari /me)
  *   THREADS_API_BASE (default https://graph.threads.net/v1.0)
  */
 
@@ -26,7 +26,7 @@ if (!fileArg) {
 }
 
 const API_BASE = process.env.THREADS_API_BASE || 'https://graph.threads.net/v1.0';
-const USER_ID = process.env.THREADS_USER_ID;
+let USER_ID = process.env.THREADS_USER_ID || null;
 const ACCESS_TOKEN = process.env.THREADS_ACCESS_TOKEN;
 const REQUEST_TIMEOUT_MS = Number(process.env.THREADS_REQUEST_TIMEOUT_MS || 30000);
 const PUBLISH_RETRIES = Number(process.env.THREADS_PUBLISH_RETRIES || 4);
@@ -43,6 +43,40 @@ async function loadPost(path) {
     throw new Error(`Payload tidak valid:\n- ${errors.join('\n- ')}`);
   }
   return data;
+}
+
+function makeApiError(res, body) {
+  const message = body?.error?.message || JSON.stringify(body);
+  const error = new Error(`Threads API ${res.status}: ${message}`);
+  error.status = res.status;
+  error.body = body;
+  return error;
+}
+
+async function apiGet(path, params = {}) {
+  const url = new URL(`${API_BASE}${path}`);
+  for (const [key, value] of Object.entries(params)) {
+    if (value != null) url.searchParams.set(key, value);
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw makeApiError(res, body);
+    return body;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function resolveUserId() {
+  if (USER_ID) return USER_ID;
+  const me = await apiGet('/me', { fields: 'id,username', access_token: ACCESS_TOKEN });
+  if (!me.id) throw new Error('Threads API /me tidak mengembalikan user id.');
+  USER_ID = String(me.id);
+  return USER_ID;
 }
 
 function paramsFor(item, replyToId) {
@@ -75,13 +109,7 @@ async function apiPost(path, params) {
       signal: controller.signal,
     });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const message = body?.error?.message || JSON.stringify(body);
-      const error = new Error(`Threads API ${res.status}: ${message}`);
-      error.status = res.status;
-      error.body = body;
-      throw error;
-    }
+    if (!res.ok) throw makeApiError(res, body);
     return body;
   } finally {
     clearTimeout(timeout);
@@ -89,12 +117,14 @@ async function apiPost(path, params) {
 }
 
 async function createContainer(item, replyToId) {
-  return apiPost(`/${USER_ID}/threads`, paramsFor(item, replyToId));
+  const userId = await resolveUserId();
+  return apiPost(`/${userId}/threads`, paramsFor(item, replyToId));
 }
 
 async function publishContainer(containerId) {
+  const userId = await resolveUserId();
   const p = new URLSearchParams({ creation_id: containerId, access_token: ACCESS_TOKEN });
-  return apiPost(`/${USER_ID}/threads_publish`, p);
+  return apiPost(`/${userId}/threads_publish`, p);
 }
 
 async function publishContainerWithRetry(containerId) {
@@ -116,8 +146,6 @@ async function publishItem(item, replyToId = null) {
   const created = await createContainer(item, replyToId);
   if (!created.id) throw new Error('API tidak mengembalikan creation container id');
 
-  // Media membutuhkan waktu diproses di sisi Threads. Jeda singkat ini juga
-  // mengurangi kemungkinan publish dipanggil terlalu cepat.
   if (item.media?.image_url) await sleep(2000);
   if (item.media?.video_url) await sleep(8000);
 
@@ -139,9 +167,11 @@ if (!publish) {
   process.exit(0);
 }
 
-if (!USER_ID || !ACCESS_TOKEN) {
-  throw new Error('Live publish diblokir: THREADS_USER_ID dan THREADS_ACCESS_TOKEN belum tersedia.');
+if (!ACCESS_TOKEN) {
+  throw new Error('Live publish diblokir: THREADS_ACCESS_TOKEN belum tersedia.');
 }
+
+await resolveUserId();
 
 const rootId = await publishItem(post.main);
 const published = [{ type: 'main', id: rootId }];
@@ -153,4 +183,4 @@ for (let i = 0; i < post.replies.length; i++) {
   parentId = id;
 }
 
-console.log(JSON.stringify({ mode: 'published', root_id: rootId, published }, null, 2));
+console.log(JSON.stringify({ mode: 'published', user_id: USER_ID, root_id: rootId, published }, null, 2));
