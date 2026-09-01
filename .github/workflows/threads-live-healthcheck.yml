@@ -1,0 +1,34 @@
+name: Threads Live Healthcheck
+
+on:
+  push:
+    paths:
+      - '.github/workflows/threads-live-healthcheck.yml'
+      - 'scripts/threads-healthcheck.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+      THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify Threads secret is available
+        shell: bash
+        run: |
+          if [ -z "$THREADS_ACCESS_TOKEN" ]; then
+            echo "THREADS_ACCESS_TOKEN secret is missing or empty"
+            exit 2
+          fi
+          echo "Threads access token secret detected"
+      - name: Run read-only Threads API healthcheck
+        run: node scripts/threads-healthcheck.mjs
