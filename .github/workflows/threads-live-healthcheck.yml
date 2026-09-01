@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+      THREADS_ACCESS_TOKEN: ${{ secrets.TOKEN_THREADS_RUMAHGIS }}
       THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           if [ -z "$THREADS_ACCESS_TOKEN" ]; then
-            echo "THREADS_ACCESS_TOKEN secret is missing or empty"
+            echo "TOKEN_THREADS_RUMAHGIS secret is missing or empty"
             exit 2
           fi
           echo "Threads access token secret detected"
