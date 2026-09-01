@@ -2,6 +2,12 @@
   "account": "@rumahgis",
   "mode": "draft",
   "requireReview": true,
-  "maxThreadParts": 10,
-  "language": "id-ID"
+  "main": {
+    "text": "Contoh post utama RumahGIS."
+  },
+  "replies": [
+    {
+      "text": "Contoh reply pertama."
+    }
+  ]
 }
