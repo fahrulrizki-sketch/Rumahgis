@@ -31,6 +31,7 @@ let USER_ID = process.env.THREADS_USER_ID || null;
 const ACCESS_TOKEN = process.env.THREADS_ACCESS_TOKEN;
 const REQUEST_TIMEOUT_MS = Number(process.env.THREADS_REQUEST_TIMEOUT_MS || 30000);
 const PUBLISH_RETRIES = Number(process.env.THREADS_PUBLISH_RETRIES || 4);
+const RETRY_DELAY_MS = Number(process.env.THREADS_RETRY_DELAY_MS || 1500);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -141,9 +142,10 @@ async function publishContainerWithRetry(containerId) {
       return await publishContainer(containerId);
     } catch (error) {
       lastError = error;
-      const retryable = error.status === 429 || (error.status >= 500 && error.status < 600) || error.name === 'AbortError';
+      const mediaNotReady = error.body?.error?.code === 24 && error.body?.error?.error_subcode === 4279009;
+      const retryable = mediaNotReady || error.status === 429 || (error.status >= 500 && error.status < 600) || error.name === 'AbortError';
       if (!retryable || attempt === PUBLISH_RETRIES) throw error;
-      await sleep(1500 * attempt);
+      await sleep(RETRY_DELAY_MS * attempt);
     }
   }
   throw lastError;

@@ -142,3 +142,52 @@ test('publisher injects an approved relevant affiliate link only into the final 
   assert.match(createCalls[1].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
   assert.equal(JSON.parse(result.stdout).affiliate.decision, 'YES');
 });
+
+test('publisher retries the same container when Threads reports media not ready', async (t) => {
+  let publishAttempts = 0;
+  const server = http.createServer((req, res) => {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', () => {
+      res.setHeader('content-type', 'application/json');
+      if (req.url === '/v1.0/123/threads') {
+        res.end(JSON.stringify({ id: 'container-delayed' }));
+        return;
+      }
+      if (req.url === '/v1.0/123/threads_publish') {
+        publishAttempts += 1;
+        if (publishAttempts === 1) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: {
+            message: 'The requested resource does not exist',
+            code: 24,
+            error_subcode: 4279009,
+          } }));
+          return;
+        }
+        res.end(JSON.stringify({ id: 'post-after-settle' }));
+        return;
+      }
+      res.statusCode = 404;
+      res.end(JSON.stringify({ error: { message: 'not found' } }));
+    });
+  });
+
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const { port } = server.address();
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'rumahgis-media-ready-'));
+  const payloadPath = path.join(dir, 'thread.json');
+  await fs.writeFile(payloadPath, JSON.stringify({ main: { text: 'post uji retry' }, replies: [] }));
+
+  const result = await runNode(['scripts/threads-publisher.mjs', payloadPath, '--publish'], {
+    THREADS_API_BASE: `http://127.0.0.1:${port}/v1.0`,
+    THREADS_USER_ID: '123',
+    THREADS_ACCESS_TOKEN: 'test-token',
+    THREADS_RETRY_DELAY_MS: '5',
+  });
+
+  assert.equal(result.code, 0, result.stderr);
+  assert.equal(publishAttempts, 2);
+  assert.equal(JSON.parse(result.stdout).root_id, 'post-after-settle');
+});

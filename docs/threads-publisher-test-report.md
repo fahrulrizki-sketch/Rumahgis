@@ -36,6 +36,8 @@ GitHub Actions `Threads Live Healthcheck` berhasil menggunakan secret repository
 - Post terverifikasi tampil pada profil @rumahgis: `https://www.threads.com/@rumahgis/post/DcwC3M3mmR_`.
 - Tidak dilakukan retry atau publikasi kedua.
 
+Catatan hardening setelah smoke test: respons sementara Threads `Media Not Found` (code 24/subcode 4279009) kini diperlakukan sebagai kondisi container belum siap. Publisher mengulang endpoint publish pada creation ID yang sama dan tidak membuat container/post baru.
+
 Live verification baru boleh dilakukan setelah pemilik akun mengotorisasi Meta Threads App dan memberikan token melalui environment/secret store, bukan melalui commit GitHub.
 
 ## Kriteria milestone live selesai
