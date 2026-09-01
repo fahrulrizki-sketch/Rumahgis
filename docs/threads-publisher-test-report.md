@@ -1,7 +1,7 @@
 # Threads Publisher Test Report
 
 Tanggal: 2026-09-01
-Status: PRE-PRODUCTION PASS / LIVE AUTH PENDING
+Status: LIVE SMOKE PASS
 
 ## Yang sudah diverifikasi
 
@@ -25,7 +25,16 @@ Status: PRE-PRODUCTION PASS / LIVE AUTH PENDING
 
 ## Status live
 
-GitHub Actions `Threads Live Healthcheck` telah berhasil menggunakan secret repository. Belum ada post nyata yang dibuat sebagai bagian dari test ini. Workflow smoke publish terkontrol dan payload tetap tanpa affiliate telah disiapkan; publikasi nyata tetap memerlukan pemicu manual serta konfirmasi eksplisit owner.
+GitHub Actions `Threads Live Healthcheck` berhasil menggunakan secret repository. Workflow smoke publish terkontrol kemudian dijalankan dengan payload tetap tanpa affiliate setelah konfirmasi eksplisit owner.
+
+## Hasil smoke publish live
+
+- Waktu: 2026-09-01.
+- Workflow: `Threads Controlled Smoke Publish` run `33529373081` — sukses.
+- Payload tetap tanpa affiliate dan tanpa reply.
+- Threads API mengembalikan root media ID `18126014761805746`.
+- Post terverifikasi tampil pada profil @rumahgis: `https://www.threads.com/@rumahgis/post/DcwC3M3mmR_`.
+- Tidak dilakukan retry atau publikasi kedua.
 
 Live verification baru boleh dilakukan setelah pemilik akun mengotorisasi Meta Threads App dan memberikan token melalui environment/secret store, bukan melalui commit GitHub.
 
@@ -37,4 +46,4 @@ Live verification baru boleh dilakukan setelah pemilik akun mengotorisasi Meta T
 4. ID hasil publish diverifikasi melalui API/account.
 5. Payload konten produksi lolos validator dan dry-run.
 
-Sampai kelima poin di atas terpenuhi, status milestone tetap `LIVE AUTH PENDING`.
+Kelima kriteria tersebut telah terpenuhi untuk milestone smoke publish. Publikasi konten reguler tetap harus memakai review payload, dry-run, dan kebijakan affiliate sebelum write.
