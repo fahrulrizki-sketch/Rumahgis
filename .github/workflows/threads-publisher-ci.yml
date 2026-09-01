@@ -5,12 +5,14 @@ on:
     paths:
       - 'scripts/**'
       - 'tests/**'
+      - 'config/posting.example.json'
       - 'package.json'
       - '.github/workflows/threads-publisher-ci.yml'
   pull_request:
     paths:
       - 'scripts/**'
       - 'tests/**'
+      - 'config/posting.example.json'
       - 'package.json'
       - '.github/workflows/threads-publisher-ci.yml'
 
@@ -26,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Run unit tests
+      - name: Run unit and integration tests
         run: npm test
       - name: Validate example payload
         run: node scripts/validate-thread.mjs config/posting.example.json
