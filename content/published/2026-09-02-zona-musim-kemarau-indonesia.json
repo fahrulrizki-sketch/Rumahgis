@@ -1,0 +1,27 @@
+{
+  "status": "published",
+  "published_at": "2026-09-02T05:01:36+07:00",
+  "title": "Mengapa puncak kemarau tidak serentak di seluruh Indonesia?",
+  "source_commit": "1e3f9b0bbf7a4aaab9c967f50b91d2f72c678020",
+  "workflow_run": "https://github.com/fahrulrizki-sketch/Rumahgis/actions/runs/33564053875",
+  "permalink": "https://www.threads.com/@rumahgis/post/Dcwr3SNkukH",
+  "affiliate": {
+    "decision": "NO",
+    "reason": "disabled_by_content",
+    "product_id": null
+  },
+  "root_id": "18103065173193800",
+  "reply_ids": [
+    "18118852234904080",
+    "18099809723201474",
+    "18046960967616527",
+    "18104170319219303",
+    "18098606726366284"
+  ],
+  "verification": {
+    "workflow_conclusion": "success",
+    "profile_visible": true,
+    "visible_reply_count": 5,
+    "duplicate_run": false
+  }
+}

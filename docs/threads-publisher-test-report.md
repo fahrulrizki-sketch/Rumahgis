@@ -49,3 +49,14 @@ Live verification baru boleh dilakukan setelah pemilik akun mengotorisasi Meta T
 5. Payload konten produksi lolos validator dan dry-run.
 
 Kelima kriteria tersebut telah terpenuhi untuk milestone smoke publish. Publikasi konten reguler tetap harus memakai review payload, dry-run, dan kebijakan affiliate sebelum write.
+
+## Publikasi reguler pertama
+
+- Tema: cara membaca Zona Musim dan puncak kemarau September 2026.
+- Hasil review: 1 post utama + 5 reply, seluruhnya di bawah 500 karakter.
+- Affiliate: NO, karena produk tidak relevan secara alami.
+- Run awal `33563721657` gagal sebelum post utama terbit karena container belum siap (`Media Not Found`, code 24/subcode 4279009); profil diverifikasi tidak memuat post parsial.
+- Publisher diperkuat pada commit `1e3f9b0` dan CI `33563963472` lulus 15/15 test.
+- Run final `33564053875` sukses menerbitkan 1 post utama dan 5 reply.
+- Permalink: `https://www.threads.com/@rumahgis/post/Dcwr3SNkukH`.
+- Smoke post sebelumnya telah dihapus sesuai persetujuan owner.
