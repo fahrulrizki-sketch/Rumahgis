@@ -3,8 +3,8 @@
 /**
  * RumahGIS Threads publisher
  *
- * Safe by default: dry-run unless --publish is supplied.
- * Credentials are read only from environment variables.
+ * Aman secara default: dry-run kecuali --publish diberikan.
+ * Credential hanya dibaca dari environment variable.
  *
  * Required for live publishing:
  *   THREADS_USER_ID
@@ -14,6 +14,7 @@
  */
 
 import fs from 'node:fs/promises';
+import { validateThread } from './thread-schema.mjs';
 
 const args = process.argv.slice(2);
 const publish = args.includes('--publish');
@@ -27,14 +28,20 @@ if (!fileArg) {
 const API_BASE = process.env.THREADS_API_BASE || 'https://graph.threads.net/v1.0';
 const USER_ID = process.env.THREADS_USER_ID;
 const ACCESS_TOKEN = process.env.THREADS_ACCESS_TOKEN;
+const REQUEST_TIMEOUT_MS = Number(process.env.THREADS_REQUEST_TIMEOUT_MS || 30000);
+const PUBLISH_RETRIES = Number(process.env.THREADS_PUBLISH_RETRIES || 4);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function loadPost(path) {
   const raw = await fs.readFile(path, 'utf8');
   const data = JSON.parse(raw);
-  if (!data.main?.text) throw new Error('main.text wajib diisi');
   if (!Array.isArray(data.replies)) data.replies = [];
+
+  const errors = validateThread(data);
+  if (errors.length) {
+    throw new Error(`Payload tidak valid:\n- ${errors.join('\n- ')}`);
+  }
   return data;
 }
 
@@ -59,10 +66,26 @@ function paramsFor(item, replyToId) {
 }
 
 async function apiPost(path, params) {
-  const res = await fetch(`${API_BASE}${path}`, { method: 'POST', body: params });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(`Threads API ${res.status}: ${JSON.stringify(body)}`);
-  return body;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      body: params,
+      signal: controller.signal,
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const message = body?.error?.message || JSON.stringify(body);
+      const error = new Error(`Threads API ${res.status}: ${message}`);
+      error.status = res.status;
+      error.body = body;
+      throw error;
+    }
+    return body;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function createContainer(item, replyToId) {
@@ -74,11 +97,31 @@ async function publishContainer(containerId) {
   return apiPost(`/${USER_ID}/threads_publish`, p);
 }
 
+async function publishContainerWithRetry(containerId) {
+  let lastError;
+  for (let attempt = 1; attempt <= PUBLISH_RETRIES; attempt++) {
+    try {
+      return await publishContainer(containerId);
+    } catch (error) {
+      lastError = error;
+      const retryable = error.status === 429 || (error.status >= 500 && error.status < 600) || error.name === 'AbortError';
+      if (!retryable || attempt === PUBLISH_RETRIES) throw error;
+      await sleep(1500 * attempt);
+    }
+  }
+  throw lastError;
+}
+
 async function publishItem(item, replyToId = null) {
   const created = await createContainer(item, replyToId);
   if (!created.id) throw new Error('API tidak mengembalikan creation container id');
+
+  // Media membutuhkan waktu diproses di sisi Threads. Jeda singkat ini juga
+  // mengurangi kemungkinan publish dipanggil terlalu cepat.
+  if (item.media?.image_url) await sleep(2000);
   if (item.media?.video_url) await sleep(8000);
-  const result = await publishContainer(created.id);
+
+  const result = await publishContainerWithRetry(created.id);
   if (!result.id) throw new Error('API tidak mengembalikan published media id');
   return result.id;
 }
@@ -89,8 +132,8 @@ if (!publish) {
   console.log(JSON.stringify({
     mode: 'dry-run',
     valid: true,
-    main: { text_chars: post.main.text.length, media: post.main.media || null },
-    replies: post.replies.map((r, i) => ({ index: i + 1, text_chars: r.text?.length || 0, media: r.media || null })),
+    main: { text_chars: [...post.main.text].length, media: post.main.media || null },
+    replies: post.replies.map((r, i) => ({ index: i + 1, text_chars: [...r.text].length, media: r.media || null })),
     note: 'Tidak ada posting yang dikirim. Gunakan --publish hanya setelah credential dan payload diverifikasi.'
   }, null, 2));
   process.exit(0);
