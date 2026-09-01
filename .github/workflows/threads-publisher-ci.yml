@@ -1,0 +1,34 @@
+name: Threads Publisher CI
+
+on:
+  push:
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/threads-publisher-ci.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/threads-publisher-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run unit tests
+        run: npm test
+      - name: Validate example payload
+        run: node scripts/validate-thread.mjs config/posting.example.json
+      - name: Dry-run publisher
+        run: node scripts/threads-publisher.mjs config/posting.example.json
