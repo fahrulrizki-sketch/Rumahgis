@@ -176,6 +176,7 @@ if (!publish) {
       decision: prepared.affiliate.decision,
       reason: prepared.affiliate.reason,
       product_id: prepared.affiliate.product?.id || null,
+      product_ids: (prepared.affiliate.products || []).map((product) => product.id),
       matched_keywords: prepared.affiliate.matched_keywords,
     },
     note: 'Tidak ada posting yang dikirim. Gunakan --publish hanya setelah credential dan payload diverifikasi.'
@@ -207,6 +208,7 @@ console.log(JSON.stringify({
     decision: prepared.affiliate.decision,
     reason: prepared.affiliate.reason,
     product_id: prepared.affiliate.product?.id || null,
+    product_ids: (prepared.affiliate.products || []).map((product) => product.id),
   },
   published,
 }, null, 2));

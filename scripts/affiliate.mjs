@@ -107,32 +107,61 @@ export function decideAffiliate(post, bank) {
   if (sensitive) return { decision: 'NO', reason: 'sensitive_content', product: null, matched_keywords: [] };
   if (config.mode === 'no') return { decision: 'NO', reason: 'disabled_by_content', product: null, matched_keywords: [] };
 
+  const requestedIds = config.product_ids || (config.product_id ? [config.product_id] : []);
   const candidates = bank.products
     .filter((product) => product.status === 'active' && product.approved_for_auto_publish)
-    .filter((product) => !config.product_id || product.id === config.product_id)
+    .filter((product) => requestedIds.length === 0 || requestedIds.includes(product.id))
     .map((product) => ({ product, matches: matchingKeywords(text, product) }))
     .filter((candidate) => candidate.matches.length > 0)
     .sort((a, b) => b.matches.length - a.matches.length || a.product.id.localeCompare(b.product.id));
 
-  if (!candidates.length) {
-    const requested = config.product_id && bank.products.find((product) => product.id === config.product_id);
-    const reason = !requested && config.product_id
-      ? 'product_not_found'
-      : requested && normalizedUrl(requested.short_url) === normalizedUrl(TRIAL_LINK)
-        ? 'trial_link_blocked'
-        : requested && (requested.status !== 'active' || !requested.approved_for_auto_publish)
-          ? 'product_not_approved'
-          : 'no_natural_relevance';
-    return { decision: 'NO', reason, product: null, matched_keywords: [] };
+  if (requestedIds.length > 0) {
+    const candidatesById = new Map(candidates.map((candidate) => [candidate.product.id, candidate]));
+    for (const requestedId of requestedIds) {
+      const requested = bank.products.find((product) => product.id === requestedId);
+      const reason = !requested
+        ? 'product_not_found'
+        : normalizedUrl(requested.short_url) === normalizedUrl(TRIAL_LINK)
+          ? 'trial_link_blocked'
+          : requested.status !== 'active' || !requested.approved_for_auto_publish
+            ? 'product_not_approved'
+            : !candidatesById.has(requestedId)
+              ? 'no_natural_relevance'
+              : null;
+      if (reason) return { decision: 'NO', reason, product: null, products: [], matched_keywords: [] };
+    }
+    candidates.splice(0, candidates.length, ...requestedIds.map((id) => candidatesById.get(id)));
   }
 
-  const selected = candidates[0];
+  if (!candidates.length) {
+    return { decision: 'NO', reason: 'no_natural_relevance', product: null, products: [], matched_keywords: [] };
+  }
+
+  const selected = requestedIds.length > 0 ? candidates : candidates.slice(0, 1);
   return {
     decision: 'YES',
     reason: 'relevant_approved_product',
-    product: selected.product,
-    matched_keywords: selected.matches,
+    product: selected[0].product,
+    products: selected.map((candidate) => candidate.product),
+    matched_keywords: [...new Set(selected.flatMap((candidate) => candidate.matches))],
   };
+}
+
+function affiliateReplies(products, disclosure) {
+  const headers = [disclosure, 'Rekomendasi affiliate (lanjutan):'];
+  const replies = [];
+  let text = headers[0];
+  for (const [index, product] of products.entries()) {
+    const line = `${index + 1}. ${product.title}\n${product.short_url}`;
+    if ([...`${text}\n\n${line}`].length > 500) {
+      replies.push({ text });
+      text = `${headers[1]}\n\n${line}`;
+    } else {
+      text = `${text}\n\n${line}`;
+    }
+  }
+  replies.push({ text });
+  return replies;
 }
 
 export function applyAffiliate(post, bank) {
@@ -142,9 +171,13 @@ export function applyAffiliate(post, bank) {
   if (result.decision !== 'YES') return { post: prepared, affiliate: result };
 
   const disclosure = prepared.affiliate?.disclosure || 'Tautan affiliate — RumahGIS mungkin menerima komisi:';
-  const addition = `${disclosure}\n${result.product.short_url}`;
+  const products = result.products || [result.product];
+  const additions = affiliateReplies(products, disclosure);
   const last = prepared.replies.at(-1);
-  if (last && [...`${last.text}\n\n${addition}`].length <= 500) last.text = `${last.text}\n\n${addition}`;
-  else prepared.replies.push({ text: addition });
+  if (products.length === 1 && last && [...`${last.text}\n\n${additions[0].text}`].length <= 500) {
+    last.text = `${last.text}\n\n${additions[0].text}`;
+  } else {
+    prepared.replies.push(...additions);
+  }
   return { post: prepared, affiliate: result };
 }

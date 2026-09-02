@@ -75,3 +75,39 @@ test('creates a new final reply when disclosure would exceed Threads limit', () 
   assert.equal(result.post.replies.length, 2);
   assert.match(result.post.replies[1].text, /abc123/);
 });
+
+test('explicit product_ids append several relevant products in final affiliate replies', () => {
+  const secondProduct = {
+    ...approvedProduct,
+    id: 'payung-uv-01',
+    title: 'Payung UV UPF50+',
+    relevance_keywords: ['paparan UV'],
+    short_url: 'https://s.shopee.co.id/uv123',
+  };
+  const result = applyAffiliate({
+    main: { text: 'Musim hujan dan paparan UV perlu persiapan.' },
+    replies: [{ text: 'Tips selesai.' }],
+    affiliate: { mode: 'yes', product_ids: [approvedProduct.id, secondProduct.id] },
+  }, { version: 1, products: [approvedProduct, secondProduct] });
+  assert.equal(result.affiliate.decision, 'YES');
+  assert.deepEqual(result.affiliate.products.map((product) => product.id), [approvedProduct.id, secondProduct.id]);
+  assert.equal(result.post.replies.length, 2);
+  assert.match(result.post.replies[1].text, /abc123/);
+  assert.match(result.post.replies[1].text, /uv123/);
+});
+
+test('explicit product_ids fail closed when one product is not naturally relevant', () => {
+  const unrelated = {
+    ...approvedProduct,
+    id: 'kompas-01',
+    relevance_keywords: ['kompas'],
+    short_url: 'https://s.shopee.co.id/kompas123',
+  };
+  const result = decideAffiliate({
+    main: { text: 'Persiapan perjalanan saat musim hujan.' },
+    replies: [],
+    affiliate: { mode: 'yes', product_ids: [approvedProduct.id, unrelated.id] },
+  }, { version: 1, products: [approvedProduct, unrelated] });
+  assert.equal(result.decision, 'NO');
+  assert.equal(result.reason, 'no_natural_relevance');
+});

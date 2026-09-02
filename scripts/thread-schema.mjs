@@ -61,8 +61,19 @@ export function validateThread(data) {
       if (data.affiliate.product_id != null && (typeof data.affiliate.product_id !== 'string' || !data.affiliate.product_id.trim())) {
         errors.push('affiliate.product_id harus berupa string yang tidak kosong');
       }
-      if (data.affiliate.mode === 'no' && data.affiliate.product_id) {
-        errors.push('affiliate.product_id tidak boleh diisi ketika mode no');
+      if (data.affiliate.product_ids != null && (
+        !Array.isArray(data.affiliate.product_ids)
+        || data.affiliate.product_ids.length === 0
+        || data.affiliate.product_ids.some((id) => typeof id !== 'string' || !id.trim())
+        || new Set(data.affiliate.product_ids).size !== data.affiliate.product_ids.length
+      )) {
+        errors.push('affiliate.product_ids harus berupa array ID unik yang tidak kosong');
+      }
+      if (data.affiliate.product_id && data.affiliate.product_ids) {
+        errors.push('gunakan product_id atau product_ids, bukan keduanya');
+      }
+      if (data.affiliate.mode === 'no' && (data.affiliate.product_id || data.affiliate.product_ids)) {
+        errors.push('affiliate product tidak boleh diisi ketika mode no');
       }
     }
   }

@@ -43,13 +43,13 @@ Smoke publish produksi menggunakan workflow manual `Threads Controlled Smoke Pub
 
 Open API Shopee tidak digunakan. Owner membuat Custom Link secara manual, lalu memasukkan produk yang sudah diperiksa ke `config/affiliate-products.json`. Sebuah produk hanya dapat dipilih ketika `status` bernilai `active`, `approved_for_auto_publish` bernilai `true`, short-link memakai host resmi `s.shopee.co.id`, dan isi utas cocok dengan minimal satu `relevance_keywords`.
 
-Bank awal berisi 20 produk aktif yang dibuat melalui dashboard Shopee Affiliate: jas hujan, kompas/navigasi, power bank untuk kerja lapangan, dan dry bag pelindung peralatan. Kelompok produk dapat dijeda sewaktu-waktu dengan mengubah `status` menjadi `paused` atau `approved_for_auto_publish` menjadi `false`.
+Bank berisi produk aktif yang dibuat melalui dashboard Shopee Affiliate: perlengkapan hujan, navigasi, daya dan pelindung peralatan lapangan, serta perlindungan debu/UV dan hidrasi untuk musim kemarau. Kelompok produk dapat dijeda sewaktu-waktu dengan mengubah `status` menjadi `paused` atau `approved_for_auto_publish` menjadi `false`.
 
 Pada payload, gunakan `affiliate.mode`:
 
 - `no`: tidak memakai affiliate.
 - `auto`: memilih produk relevan yang sudah disetujui dari bank.
-- `yes`: meminta affiliate; tetap gagal menjadi YES bila konten sensitif, produk tidak disetujui, atau relevansinya tidak alami. `product_id` dapat dipakai untuk menentukan produk.
+- `yes`: meminta affiliate; tetap gagal menjadi YES bila konten sensitif, produk tidak disetujui, atau relevansinya tidak alami. `product_id` memilih satu produk, sedangkan `product_ids` memilih beberapa produk dalam urutan yang ditentukan. Beberapa produk otomatis dibagi menjadi reply akhir yang masing-masing tetap di bawah 500 karakter.
 
 Konten tragedi, korban, bencana aktif, kematian, konflik, serta istilah darurat terkait selalu menghasilkan keputusan `NO`. Link percobaan `s.shopee.co.id/904rirq1Xk` tersimpan sebagai test fixture dan tidak dapat disetujui untuk publikasi otomatis. Dry-run menampilkan keputusan dan alasannya sebelum ada write ke Threads.
 

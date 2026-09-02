@@ -36,10 +36,19 @@ test('validates affiliate control metadata', () => {
     replies: [],
     affiliate: { mode: 'auto', product_id: 'produk-1' },
   }), []);
+  assert.deepEqual(validateThread({
+    main: { text: 'x' },
+    replies: [],
+    affiliate: { mode: 'yes', product_ids: ['produk-1', 'produk-2'] },
+  }), []);
   const errors = validateThread({
     main: { text: 'x' },
     replies: [],
     affiliate: { mode: 'sometimes' },
   });
   assert.ok(errors.some((error) => error.includes('affiliate.mode')));
+  assert.ok(validateThread({
+    main: { text: 'x' },
+    affiliate: { mode: 'yes', product_id: 'a', product_ids: ['b'] },
+  }).some((error) => error.includes('bukan keduanya')));
 });
