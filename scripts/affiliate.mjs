@@ -147,21 +147,10 @@ export function decideAffiliate(post, bank) {
   };
 }
 
-function affiliateReplies(products, disclosure) {
-  const headers = [disclosure, 'Rekomendasi affiliate (lanjutan):'];
-  const replies = [];
-  let text = headers[0];
-  for (const [index, product] of products.entries()) {
-    const line = `${index + 1}. ${product.title}\n${product.short_url}`;
-    if ([...`${text}\n\n${line}`].length > 500) {
-      replies.push({ text });
-      text = `${headers[1]}\n\n${line}`;
-    } else {
-      text = `${text}\n\n${line}`;
-    }
-  }
-  replies.push({ text });
-  return replies;
+function affiliateReplies(products) {
+  return products.map((product, index) => ({
+    text: `Rekomendasi ${index + 1}/${products.length}\n${product.title}\n${product.short_url}`,
+  }));
 }
 
 export function applyAffiliate(post, bank) {
@@ -170,14 +159,7 @@ export function applyAffiliate(post, bank) {
   const result = decideAffiliate(prepared, bank);
   if (result.decision !== 'YES') return { post: prepared, affiliate: result };
 
-  const disclosure = prepared.affiliate?.disclosure || 'Tautan affiliate — RumahGIS mungkin menerima komisi:';
   const products = result.products || [result.product];
-  const additions = affiliateReplies(products, disclosure);
-  const last = prepared.replies.at(-1);
-  if (products.length === 1 && last && [...`${last.text}\n\n${additions[0].text}`].length <= 500) {
-    last.text = `${last.text}\n\n${additions[0].text}`;
-  } else {
-    prepared.replies.push(...additions);
-  }
+  prepared.replies.push(...affiliateReplies(products));
   return { post: prepared, affiliate: result };
 }

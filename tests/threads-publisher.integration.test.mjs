@@ -84,7 +84,7 @@ test('publisher resolves /me, creates root, and chains replies against mock Thre
   assert.equal(createCalls[2].params.reply_to_id, 'post-2');
 });
 
-test('publisher injects an approved relevant affiliate link only into the final reply', async (t) => {
+test('publisher injects an approved relevant affiliate link as a separate final reply', async (t) => {
   const createCalls = [];
   let counter = 0;
   const server = http.createServer((req, res) => {
@@ -136,10 +136,11 @@ test('publisher injects an approved relevant affiliate link only into the final 
   });
 
   assert.equal(result.code, 0, result.stderr);
-  assert.equal(createCalls.length, 2);
+  assert.equal(createCalls.length, 3);
   assert.doesNotMatch(createCalls[0].text, /shopee/i);
-  assert.match(createCalls[1].text, /Tautan affiliate/);
-  assert.match(createCalls[1].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
+  assert.doesNotMatch(createCalls[1].text, /shopee/i);
+  assert.match(createCalls[2].text, /Rekomendasi 1\/1/);
+  assert.match(createCalls[2].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
   assert.equal(JSON.parse(result.stdout).affiliate.decision, 'YES');
 });
 

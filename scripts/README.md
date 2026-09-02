@@ -44,7 +44,7 @@ Credential jangan pernah dimasukkan ke source code atau commit GitHub.
 }
 ```
 
-`product_id` dan `product_ids` bersifat opsional serta tidak boleh dipakai bersamaan. Publisher membaca bank dari `config/affiliate-products.json`, atau dari path `AFFILIATE_PRODUCT_BANK` untuk pengujian/operasional. Link affiliate hanya ditambahkan setelah reply konten terakhir; banyak produk dibagi ke beberapa reply bila perlu. Jalankan `npm run validate:affiliate` setiap kali bank diubah.
+`product_id` dan `product_ids` bersifat opsional serta tidak boleh dipakai bersamaan. Publisher membaca bank dari `config/affiliate-products.json`, atau dari path `AFFILIATE_PRODUCT_BANK` untuk pengujian/operasional. Setiap link affiliate ditambahkan sebagai satu reply tersendiri, berurutan setelah reply konten terakhir. Jalankan `npm run validate:affiliate` setiap kali bank diubah.
 
 Media URL untuk live API harus dapat diakses oleh server Threads/Meta. File lokal tidak cukup.
 

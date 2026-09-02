@@ -55,21 +55,23 @@ test('rejects a product when relevance would be forced', () => {
   assert.equal(result.reason, 'no_natural_relevance');
 });
 
-test('auto mode appends an approved relevant link to the last reply', () => {
+test('auto mode creates a separate final reply for an approved relevant link', () => {
   const result = applyAffiliate({
     main: { text: 'Persiapan perjalanan saat musim hujan.' },
     replies: [{ text: 'Selalu cek prakiraan cuaca.' }],
     affiliate: { mode: 'auto' },
   }, bank);
   assert.equal(result.affiliate.decision, 'YES');
-  assert.match(result.post.replies[0].text, /Tautan affiliate/);
-  assert.match(result.post.replies[0].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
+  assert.equal(result.post.replies.length, 2);
+  assert.doesNotMatch(result.post.replies[0].text, /shopee/i);
+  assert.match(result.post.replies[1].text, /Rekomendasi 1\/1/);
+  assert.match(result.post.replies[1].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
 });
 
-test('creates a new final reply when disclosure would exceed Threads limit', () => {
+test('keeps an affiliate link separate even when the content reply is short', () => {
   const result = applyAffiliate({
     main: { text: 'Panduan musim hujan.' },
-    replies: [{ text: 'x'.repeat(480) }],
+    replies: [{ text: 'Ringkasan.' }],
     affiliate: { mode: 'auto' },
   }, bank);
   assert.equal(result.post.replies.length, 2);
@@ -91,9 +93,11 @@ test('explicit product_ids append several relevant products in final affiliate r
   }, { version: 1, products: [approvedProduct, secondProduct] });
   assert.equal(result.affiliate.decision, 'YES');
   assert.deepEqual(result.affiliate.products.map((product) => product.id), [approvedProduct.id, secondProduct.id]);
-  assert.equal(result.post.replies.length, 2);
+  assert.equal(result.post.replies.length, 3);
+  assert.match(result.post.replies[1].text, /Rekomendasi 1\/2/);
   assert.match(result.post.replies[1].text, /abc123/);
-  assert.match(result.post.replies[1].text, /uv123/);
+  assert.match(result.post.replies[2].text, /Rekomendasi 2\/2/);
+  assert.match(result.post.replies[2].text, /uv123/);
 });
 
 test('explicit product_ids fail closed when one product is not naturally relevant', () => {

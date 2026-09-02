@@ -8,7 +8,7 @@ Automation konten untuk akun Threads **@rumahgis**.
 - Mempublikasikan post utama dan reply berantai melalui Threads API resmi.
 - Memisahkan credential/secret dari source code.
 - Menyediakan dry-run, healthcheck, test, dan utilitas pemeliharaan token.
-- Menilai kelayakan Shopee Affiliate dan menempatkan link relevan pada reply terakhir.
+- Menilai kelayakan Shopee Affiliate dan menempatkan setiap link relevan pada reply terpisah setelah konten.
 
 ## Struktur
 - `content/drafts/` — draft yang belum dipublikasikan.
@@ -49,7 +49,7 @@ Pada payload, gunakan `affiliate.mode`:
 
 - `no`: tidak memakai affiliate.
 - `auto`: memilih produk relevan yang sudah disetujui dari bank.
-- `yes`: meminta affiliate; tetap gagal menjadi YES bila konten sensitif, produk tidak disetujui, atau relevansinya tidak alami. `product_id` memilih satu produk, sedangkan `product_ids` memilih beberapa produk dalam urutan yang ditentukan. Beberapa produk otomatis dibagi menjadi reply akhir yang masing-masing tetap di bawah 500 karakter.
+- `yes`: meminta affiliate; tetap gagal menjadi YES bila konten sensitif, produk tidak disetujui, atau relevansinya tidak alami. `product_id` memilih satu produk, sedangkan `product_ids` memilih beberapa produk dalam urutan yang ditentukan. Setiap produk ditempatkan pada reply tersendiri setelah reply konten terakhir.
 
 Konten tragedi, korban, bencana aktif, kematian, konflik, serta istilah darurat terkait selalu menghasilkan keputusan `NO`. Link percobaan `s.shopee.co.id/904rirq1Xk` tersimpan sebagai test fixture dan tidak dapat disetujui untuk publikasi otomatis. Dry-run menampilkan keputusan dan alasannya sebelum ada write ke Threads.
 
