@@ -1,0 +1,30 @@
+{
+  "status": "published",
+  "published_at": "2026-09-02T13:40:34+07:00",
+  "title": "El Niño kuat dan tips menjaga kesehatan saat musim kemarau",
+  "source_commit": "98d7488693a090d1b1b2dd2aa198ab2452c8a124",
+  "workflow_run": "https://github.com/fahrulrizki-sketch/Rumahgis/actions/runs/33599763134",
+  "permalink": "https://www.threads.com/@rumahgis/post/DcxnLUXFdAM",
+  "affiliate": {
+    "decision": "YES",
+    "reason": "relevant_approved_product",
+    "product_ids": [
+      "masker-sensi-kn95-individual",
+      "masker-sensi-kn95-box",
+      "masker-3m-8210-n95",
+      "sunscreen-wardah-airy-smooth-spf50",
+      "sunscreen-wardah-physical-spf50",
+      "tumbler-locknlock-12l",
+      "payung-sunova-upf50",
+      "facial-wash-wardah-gentle-low-ph"
+    ]
+  },
+  "verification": {
+    "workflow_conclusion": "success",
+    "profile_visible": true,
+    "main_link_card_visible": true,
+    "visible_reply_count": 13,
+    "affiliate_reply_count": 8,
+    "duplicate_run": false
+  }
+}

@@ -60,3 +60,13 @@ Kelima kriteria tersebut telah terpenuhi untuk milestone smoke publish. Publikas
 - Run final `33564053875` sukses menerbitkan 1 post utama dan 5 reply.
 - Permalink: `https://www.threads.com/@rumahgis/post/Dcwr3SNkukH`.
 - Smoke post sebelumnya telah dihapus sesuai persetujuan owner.
+
+## Publikasi utas kemarau dengan affiliate
+
+- Tema: El Niño kuat, debu, perlindungan pernapasan, paparan UV, dan hidrasi saat musim kemarau.
+- Main post memuat hook dan kartu tautan resmi BMKG Indonesia.
+- Hasil review: 1 main post + 5 reply edukasi + 8 reply produk; setiap link affiliate berada pada reply terpisah dengan pengantar yang relevan.
+- Affiliate: YES untuk 8 produk yang relevan; link percobaan tetap diblokir.
+- Workflow run `33599763134` sukses dalam 2 menit 34 detik setelah test, validasi bank, dry-run, dan healthcheck lulus.
+- Profil memverifikasi rangkaian 1/14 dengan 13 reply tanpa duplikasi.
+- Permalink: `https://www.threads.com/@rumahgis/post/DcxnLUXFdAM`.
