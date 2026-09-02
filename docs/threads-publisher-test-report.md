@@ -70,3 +70,13 @@ Kelima kriteria tersebut telah terpenuhi untuk milestone smoke publish. Publikas
 - Workflow run `33599763134` sukses dalam 2 menit 34 detik setelah test, validasi bank, dry-run, dan healthcheck lulus.
 - Profil memverifikasi rangkaian 1/14 dengan 13 reply tanpa duplikasi.
 - Permalink: `https://www.threads.com/@rumahgis/post/DcxnLUXFdAM`.
+
+## Publikasi utas hujan lokal saat kemarau
+
+- Tema: perbedaan cuaca harian dan musim serta penyebab hujan lokal tetap muncul saat kemarau.
+- Main post memuat hook dan kartu tautan prakiraan resmi BMKG Indonesia periode 1–6 September 2026.
+- Hasil review: 1 main post + 5 reply edukasi + 3 reply produk; setiap link affiliate berada pada reply terpisah dengan pengantar relevan.
+- Affiliate: YES untuk payung lipat anti-UV, jas hujan setelan, dan dry bag.
+- Workflow run `33606773013` sukses dalam 1 menit 46 detik setelah test, validasi bank, dry-run, dan healthcheck lulus.
+- Profil memverifikasi rangkaian 1/9 dengan 8 reply tanpa duplikasi.
+- Permalink: `https://www.threads.com/@rumahgis/post/Dcxw-dkFZQX`.
