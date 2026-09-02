@@ -55,6 +55,7 @@ export function validateProductBank(bank) {
   if (!bank || typeof bank !== 'object') return ['bank produk wajib berupa object'];
   if (!Array.isArray(bank.products)) return ['products wajib berupa array'];
   const ids = new Set();
+  const shortUrls = new Set();
   bank.products.forEach((product, index) => {
     const label = `products[${index}]`;
     if (!product || typeof product !== 'object') {
@@ -76,6 +77,9 @@ export function validateProductBank(bank) {
       errors.push(`${label}.relevance_keywords wajib berupa array yang tidak kosong`);
     }
     errors.push(...validateShopeeShortLink(product.short_url).map((error) => `${label}.${error}`));
+    const shortUrl = normalizedUrl(product.short_url);
+    if (shortUrl && shortUrls.has(shortUrl)) errors.push(`${label}.short_url duplikat: ${product.short_url}`);
+    else if (shortUrl) shortUrls.add(shortUrl);
     if (!['active', 'paused', 'expired', 'test'].includes(product.status)) {
       errors.push(`${label}.status harus active, paused, expired, atau test`);
     }

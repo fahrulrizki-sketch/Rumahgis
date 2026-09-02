@@ -45,6 +45,8 @@ Open API Shopee tidak digunakan. Owner membuat Custom Link secara manual, lalu m
 
 Bank berisi produk aktif yang dibuat melalui dashboard Shopee Affiliate: perlengkapan hujan, navigasi, daya dan pelindung peralatan lapangan, serta perlindungan debu/UV dan hidrasi untuk musim kemarau. Kelompok produk dapat dijeda sewaktu-waktu dengan mengubah `status` menjadi `paused` atau `approved_for_auto_publish` menjadi `false`.
 
+Ekspor CSV Shopee dapat didaftarkan ke bank tanpa membuka ulang dashboard. Setiap produk impor menyimpan URL produk sumber, toko, snapshot harga, penjualan, tingkat/nilai komisi, dan nama file asal. Short-link duplikat ditolak oleh validator. Listing dengan identitas tidak jelas, klaim medis, atau bahan aktif yang memerlukan review tetap dicatat sebagai `paused` dan tidak dapat dipublikasikan otomatis.
+
 Pada payload, gunakan `affiliate.mode`:
 
 - `no`: tidak memakai affiliate.

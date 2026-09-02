@@ -36,6 +36,14 @@ test('trial link can never be approved for automatic publishing', () => {
   assert.ok(errors.some((error) => error.includes('link percobaan')));
 });
 
+test('product bank rejects duplicate affiliate short links', () => {
+  const errors = validateProductBank({ products: [
+    approvedProduct,
+    { ...approvedProduct, id: 'jas-hujan-02' },
+  ] });
+  assert.ok(errors.some((error) => error.includes('short_url duplikat')));
+});
+
 test('sensitive content overrides explicit affiliate yes', () => {
   const result = decideAffiliate({
     main: { text: 'Korban bencana masih dalam proses evakuasi.' },

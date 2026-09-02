@@ -46,6 +46,8 @@ Credential jangan pernah dimasukkan ke source code atau commit GitHub.
 
 `product_id` dan `product_ids` bersifat opsional serta tidak boleh dipakai bersamaan. Publisher membaca bank dari `config/affiliate-products.json`, atau dari path `AFFILIATE_PRODUCT_BANK` untuk pengujian/operasional. Setiap link affiliate ditambahkan sebagai satu reply tersendiri, berurutan setelah reply konten terakhir. Jalankan `npm run validate:affiliate` setiap kali bank diubah.
 
+Saat produk berasal dari ekspor CSV Shopee, simpan `source_url`, `shop`, snapshot harga/penjualan/komisi, dan `imported_from` bersama short-link. Validator menolak ID maupun short-link yang duplikat. Produk impor tidak otomatis layak tayang: `status: paused` dan `approved_for_auto_publish: false` digunakan untuk listing yang belum aman direkomendasikan.
+
 Media URL untuk live API harus dapat diakses oleh server Threads/Meta. File lokal tidak cukup.
 
 ## Pengaman
