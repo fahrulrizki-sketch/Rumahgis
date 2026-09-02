@@ -16,6 +16,7 @@ const approvedProduct = {
   status: 'active',
   approved_for_auto_publish: true,
   tags: ['RumahGIS', 'Threads', 'Cuaca', '20260901', 'JasHujan'],
+  affiliate_intro: 'Jas hujan membantu menjaga tubuh dan pakaian tetap kering saat perjalanan.',
 };
 
 const bank = { version: 1, products: [approvedProduct] };
@@ -65,6 +66,7 @@ test('auto mode creates a separate final reply for an approved relevant link', (
   assert.equal(result.post.replies.length, 2);
   assert.doesNotMatch(result.post.replies[0].text, /shopee/i);
   assert.match(result.post.replies[1].text, /Rekomendasi 1\/1/);
+  assert.match(result.post.replies[1].text, /menjaga tubuh dan pakaian/);
   assert.match(result.post.replies[1].text, /https:\/\/s\.shopee\.co\.id\/abc123/);
 });
 

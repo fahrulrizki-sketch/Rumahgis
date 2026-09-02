@@ -65,6 +65,13 @@ export function validateProductBank(bank) {
     else if (ids.has(product.id)) errors.push(`${label}.id duplikat: ${product.id}`);
     else ids.add(product.id);
     if (typeof product.title !== 'string' || !product.title.trim()) errors.push(`${label}.title wajib diisi`);
+    if (product.affiliate_intro != null && (
+      typeof product.affiliate_intro !== 'string'
+      || !product.affiliate_intro.trim()
+      || [...product.affiliate_intro].length > 350
+    )) {
+      errors.push(`${label}.affiliate_intro harus berupa teks tidak kosong maksimal 350 karakter`);
+    }
     if (!Array.isArray(product.relevance_keywords) || product.relevance_keywords.length === 0) {
       errors.push(`${label}.relevance_keywords wajib berupa array yang tidak kosong`);
     }
@@ -149,7 +156,7 @@ export function decideAffiliate(post, bank) {
 
 function affiliateReplies(products) {
   return products.map((product, index) => ({
-    text: `Rekomendasi ${index + 1}/${products.length}\n${product.title}\n${product.short_url}`,
+    text: `Rekomendasi ${index + 1}/${products.length}\n${product.affiliate_intro || 'Pilihan produk yang relevan dengan topik ini:'}\n\n${product.title}\n${product.short_url}`,
   }));
 }
 
