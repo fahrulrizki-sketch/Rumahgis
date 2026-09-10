@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import { instagramPlan, instagramClient } from '../scripts/instagram.mjs';
 
 const post = { main: { text: 'Peta hujan Indonesia https://s.shopee.co.id/abc', media: { image_url: 'https://example.org/map.jpg' } }, affiliate: { mode: 'auto' } };
+test('Secret menerima spasi luar tetapi menolak username sebagai ID', () => {
+  assert.doesNotThrow(() => instagramClient({ token: ' fake\n', userId: ' 123\n' }));
+  assert.throws(() => instagramClient({ token: 'fake', userId: '@rumahgis' }), /angka ID akun/);
+});
 test('Instagram menggunakan visual Threads dan membuang URL dari caption', () => {
   const p = instagramPlan(post);
   assert.equal(p.format, 'IMAGE');

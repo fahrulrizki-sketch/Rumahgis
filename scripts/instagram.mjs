@@ -27,7 +27,10 @@ export function contentKey(post) {
 }
 
 export function instagramClient({ token, userId, version = 'v25.0', fetcher = fetch, wait = ms => new Promise(r => setTimeout(r, ms)) }) {
-  if (!token || !/^\d+$/.test(userId || '')) throw new Error('Secret Instagram token dan user ID belum siap.');
+  token = String(token || '').trim();
+  userId = String(userId || '').trim();
+  if (!token) throw new Error('Secret Instagram token belum tersedia.');
+  if (!/^\d+$/.test(userId)) throw new Error('Secret Instagram user ID harus berisi angka ID akun saja.');
   if (!/^v\d+\.\d+$/.test(version)) throw new Error('Versi Instagram API tidak valid.');
   const base = `https://graph.instagram.com/${version}`;
   async function api(path, params, method = 'GET') {

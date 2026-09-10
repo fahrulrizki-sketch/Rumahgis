@@ -1,4 +1,5 @@
 import { instagramClient } from './instagram.mjs';
+// Client menormalkan spasi luar dan memvalidasi format ID sebelum menghubungi Meta.
 
 try {
   const client = instagramClient({
