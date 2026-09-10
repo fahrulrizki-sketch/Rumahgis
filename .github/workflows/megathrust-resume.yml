@@ -1,0 +1,41 @@
+name: Lanjutkan utas megathrust dan Instagram
+on:
+  push:
+    branches: ['feat/instagram-cross-publishing']
+    paths: ['.github/workflows/megathrust-resume.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: rumahgis-social-publish
+  cancel-in-progress: false
+jobs:
+  resume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Batasi satu eksekusi pemulihan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          count=$(gh api "repos/$GH_REPO/actions/workflows/megathrust-resume.yml/runs?per_page=1" --jq '.total_count')
+          test "$count" = '1'
+      - name: Rekonsiliasi dan lanjutkan
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.TOKEN_THREADS_RUMAHGIS }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.TOKEN_INSTAGRAM_RUMAHGIS }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: node scripts/resume-megathrust.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: megathrust-final-state
+          path: megathrust-final-state.json
+          if-no-files-found: ignore
+          retention-days: 90
