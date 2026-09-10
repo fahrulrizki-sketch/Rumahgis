@@ -1,0 +1,21 @@
+name: Periksa hasil Threads megathrust
+on:
+  push:
+    paths: ['.github/workflows/megathrust-check.yml', 'scripts/check-megathrust.mjs']
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/check-megathrust.mjs
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.TOKEN_THREADS_RUMAHGIS }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: megathrust-reconciliation
+          path: megathrust-reconciliation.json
