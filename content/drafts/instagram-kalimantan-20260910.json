@@ -1,0 +1,17 @@
+{
+  "main": {
+    "text": "Asap kebakaran di Kalimantan terlihat sampai dari satelit."
+  },
+  "instagram": {
+    "format": "CAROUSEL",
+    "caption": "Asap kebakaran di Kalimantan terlihat sampai dari satelit.\n\nGambar ini direkam pada 1 September 2026. Terlihat asap menyebar di sebagian Pulau Kalimantan.\n\nGeser ke gambar kedua. Penanda merah menunjukkan lokasi yang terdeteksi satelit sebagai indikasi kebakaran. Penanda itu bukan batas luas lahan yang terbakar.\n\nSaat lahan gambut mengering, api juga bisa merambat di bawah permukaan. Itu salah satu alasan kebakarannya sulit dipadamkan.\n\nDua gambar ini memperlihatkan bagaimana satelit membantu kita melihat kejadian yang sulit dipantau dari darat.\n\nDi daerahmu, langit belakangan cerah atau terlihat berkabut?\n\nCitra: NASA Earth Observatory / Lauren Dauphin, Aqua–MODIS, 1 September 2026.\n#RumahGIS #Kalimantan #CitraSatelit #Karhutla",
+    "media": [
+      {
+        "image_url": "https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/iotd/2026/peatland-fires-darken-skies-in-indonesia/indonesiafires_amo_20260901.jpg?fit=clip&w=1440"
+      },
+      {
+        "image_url": "https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/iotd/2026/peatland-fires-darken-skies-in-indonesia/indonesiafiredetect_amo_20260901.jpg?fit=clip&w=1440"
+      }
+    ]
+  }
+}
