@@ -1,0 +1,81 @@
+name: RumahGIS Threads dan Instagram
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: 'Path JSON konten dalam repository'
+        required: true
+        type: string
+      publish:
+        description: 'Terbitkan ke Threads dan Instagram (false = preview)'
+        default: false
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: rumahgis-social-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PAYLOAD_INPUT: ${{ inputs.payload }}
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm test
+      - name: Validasi path dan identitas konten
+        id: identity
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import { contentKey } from './scripts/instagram.mjs';
+          const root = fs.realpathSync('.');
+          const file = fs.realpathSync(process.env.PAYLOAD_INPUT);
+          if (!file.startsWith(root + path.sep) || !file.endsWith('.json')) throw Error('Path payload tidak valid');
+          const key = contentKey(JSON.parse(fs.readFileSync(file, 'utf8')));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `key=${key}\n`);
+          JS
+      - name: Pulihkan state publikasi sebelumnya
+        id: restore
+        env:
+          CONTENT_KEY: ${{ steps.identity.outputs.key }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .social-state
+          gh api --paginate "repos/$GH_REPO/actions/artifacts?name=social-$CONTENT_KEY&per_page=100" > /tmp/social-artifacts.json
+          id=$(jq -s '[.[].artifacts[]] | sort_by(.id) | last | .id // empty' /tmp/social-artifacts.json)
+          if [ -n "$id" ]; then
+            gh api "repos/$GH_REPO/actions/artifacts/$id/zip" > /tmp/social-state.zip
+            unzip -o /tmp/social-state.zip -d .social-state
+            test -f ".social-state/$CONTENT_KEY.json"
+          fi
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
+      - name: Preview kedua platform
+        run: node scripts/social-publisher.mjs "$PAYLOAD_INPUT"
+      - name: Publikasi kedua platform
+        if: ${{ inputs.publish }}
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.TOKEN_THREADS_RUMAHGIS }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.TOKEN_INSTAGRAM_RUMAHGIS }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: node scripts/social-publisher.mjs "$PAYLOAD_INPUT" --publish
+      - name: Simpan hasil termasuk kegagalan parsial
+        if: ${{ always() && steps.restore.outputs.ready == 'true' && inputs.publish }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-${{ steps.identity.outputs.key }}
+          path: .social-state/*.json
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 90

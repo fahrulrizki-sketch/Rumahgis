@@ -1,0 +1,23 @@
+name: Instagram Live Healthcheck
+on:
+  push:
+    paths:
+      - '.github/workflows/instagram-live-healthcheck.yml'
+      - 'scripts/instagram-healthcheck.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verifikasi akses akun Instagram tanpa posting
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.TOKEN_INSTAGRAM_RUMAHGIS }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: node scripts/instagram-healthcheck.mjs

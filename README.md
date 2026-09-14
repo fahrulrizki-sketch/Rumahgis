@@ -1,5 +1,9 @@
 # RumahGIS Threads Automation
 
+## Integrasi Instagram
+
+Workflow `RumahGIS Threads dan Instagram` menambahkan publikasi visual Instagram tanpa URL affiliate, setelah Threads berhasil. Panduan koneksi, payload, pemulihan, dan batas implementasi ada di [docs/instagram-setup.md](docs/instagram-setup.md). Integrasi belum aktif sebelum secret Instagram dikonfigurasi dan workflow dijalankan.
+
 Automation konten untuk akun Threads **@rumahgis**.
 
 ## Tujuan
