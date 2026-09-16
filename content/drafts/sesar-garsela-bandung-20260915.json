@@ -1,0 +1,43 @@
+{
+  "main": {
+    "text": "1/6 Gempa M5,0 guncang Bandung-Garut, tapi kenapa getarannya begitu merusak padahal magnitudonya relatif sedang?\n\nKuncinya ada di kedalaman dan patahan lokal aktif. Mari kita bedah dari sudut pandang geospasial & geologi bersama RumahGIS.\n\nSimak pembahasannya di bawah 👇",
+    "media": {
+      "image_url": "https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/imagerecords/6000/6756/java_bath_2006197_lrg.jpg?fit=clip&w=1440"
+    }
+  },
+  "replies": [
+    {
+      "text": "2/6 Gempa kemarin dikonfirmasi BMKG berpusat di darat pada kedalaman sangat dangkal (sekitar 10 km).\n\nDalam seismologi & pemetaan risiko, makin dangkal hiposenter gempa darat, makin sedikit energi yang teredam lapisan batuan sebelum menghantam permukiman.\n\nRujukan parameter seismisitas BMKG:\nhttps://www.bmkg.go.id/gempabumi/gempabumi-dirasakan"
+    },
+    {
+      "text": "3/6 Siapa pelakunya? Analisis mekanisme fokal menunjukkan gempa ini dipicu aktivitas Sesar Garsela (Garut Selatan) tipe geser mendatar (strike-slip).\n\nJalur patahan aktif ini membelah wilayah permukiman padat dan lereng perbukitan Jawa Barat.",
+      "media": {
+        "image_url": "https://raw.githubusercontent.com/fahrulrizki-sketch/Rumahgis/feat/instagram-cross-publishing/content/media/megathrust-20260910/lempeng-edukasi.jpg"
+      }
+    },
+    {
+      "text": "4/6 Faktor penguat: Karakteristik tanah (efek tapak lokal / site effect).\n\nBanyak permukiman Bandung Selatan dan Garut berdiri di atas endapan vulkanik muda yang gembur. Gelombang gempa yang menembus tanah lunak ini mengalami amplifikasi (penguatan) getaran berlipat.\n\nPeta geologi regional PVMBG:\nhttps://vsi.esdm.go.id/"
+    },
+    {
+      "text": "5/6 Pelajaran mitigasi spasial penting:\n1. Bahaya gempa bukan cuma Megathrust di laut; sesar aktif darat dekat rumah punya daya rusak guncangan sangat tinggi.\n2. Cek peta micro-zonasi sesar aktif di sekitarmu.\n3. Pastikan kelayakan konstruksi rumah tahan gempa.\n\nPanduan edukasi mitigasi BMKG:\nhttps://www.bmkg.go.id/gempabumi/mitigasi/edukasi-gempabumi-tsunami"
+    },
+    {
+      "text": "6/6 Alam kita kaya bentang lanskap indah, sekaligus dinamis secara tektonik. Kuncinya bukan panik, tapi literasi data spasial dan kesiapan mitigasi mandiri.\n\nDi daerah tempat tinggalmu, sudah tahukah kamu jalur patahan aktif terdekat? Yuk diskusikan di kolom komentar."
+    }
+  ],
+  "affiliate": {
+    "mode": "no"
+  },
+  "instagram": {
+    "format": "CAROUSEL",
+    "caption": "Gempa M5,0 mengguncang Bandung–Garut, tapi kenapa dampaknya terasa begitu merusak padahal magnitudonya relatif sedang?\n\nKuncinya ada pada kedalaman dan geometri patahan darat aktif. Mari kita bedah dari sudut pandang geospasial & sains kebumian bersama RumahGIS.\n\n1. Kedalaman Sangat Dangkal (Hiposenter ~10 km)\nDalam analisis seismologi spasial, gempa dangkal di daratan membuat energi gelombang tidak banyak teredam batuan sebelum mencapai permukaan. Akibatnya, Peak Ground Acceleration (PGA) di sekitar episenter melonjak tinggi.\n\n2. Sesar Garsela (Garut Selatan)\nGempa dipicu oleh segmen patahan aktif darat dengan mekanisme sesar geser (strike-slip). Sesar darat yang melintasi zona permukiman memiliki risiko goncangan intensitas tinggi (MMI V-VI) tepat di atas jejak sesarnya.\n\n3. Efek Tapak Lokal (Site Effect)\nBanyak wilayah di cekungan Bandung dan Garut tersusun dari endapan vulkanik muda yang gembur. Ketika gelombang gempa masuk ke lapisan batuan lunak ini, terjadi amplifikasi (penguatan) getaran dan resonansi tanah.\n\nPelajaran Mitigasi:\nBahaya kegempaan di Indonesia bukan hanya Megathrust di zona laut, tetapi juga ratusan sesar aktif darat yang dekat dengan keseharian kita. Mitigasi terbaik berawal dari kesadaran peta bahaya geologi dan kepatuhan standar bangunan tahan gempa.\n\nSumber: Analisis Geologi & Seismologi BMKG, PVMBG/Badan Geologi.\n\n#RumahGIS #SesarGarsela #GempaBandung #GempaGarut #MitigasiBencana #Geospasial #Geologi #BMKG #EdukasiSains",
+    "media": [
+      {
+        "image_url": "https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/imagerecords/6000/6756/java_bath_2006197_lrg.jpg?fit=clip&w=1440"
+      },
+      {
+        "image_url": "https://raw.githubusercontent.com/fahrulrizki-sketch/Rumahgis/feat/instagram-cross-publishing/content/media/megathrust-20260910/lempeng-edukasi.jpg"
+      }
+    ]
+  }
+}
